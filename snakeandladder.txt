@@ -1,0 +1,220 @@
+board
+snake and ladder
+random snake and ladder
+list player
+dice roll
+
+1) Player play alternative
+2) Roll the dice and move forward
+3) If on the cell their is snake decrement to  tail
+4) If on the cell there is a ladder then move up.
+
+
+
+class Board{
+	
+	List<Cell> cells;
+
+	public Cell getCell(int pos){
+
+	    return cell[pos];
+	}
+
+	public void addCell(Cell cell){
+	    cells.add(cell);
+	}
+
+	public int move(String currpos, int diceNumber){
+         
+         int newpos = currpos + diceNumber;
+         Cell cell = cells.get(newpos);
+         if(cell.isSnake || cell.isLadder){
+
+                newpos=cell.endpos;
+         }
+
+         return newpos;
+
+	}
+
+}
+
+class Cell{
+	
+	int startpos;
+	boolean isSnake;
+	boolean isLadder;
+	int endpos
+
+	public boolean addSnakeEndPos(){
+
+	    if(!isSnake && !isLadder){
+	        isSnake=true;
+            int newendpos=rand.nextInt(1,startpos-10);
+            endpos=newendpos;
+            return true;
+	    }
+
+	    return false;
+	}
+
+	public boolean addLadderEndPos(){
+
+	    if(!isSnake && !isLadder){
+	        isLadder=true;
+            int newendpos=rand.nextInt(startpos+10,99);
+            endpos=newendpos;
+            return true;
+	    }
+
+	    return false;
+	}
+}
+
+class Player{
+	
+	int pos;
+	String userid;
+	boolean isWinner;
+
+	public void setNewPos(int newpos){
+
+	    pos=newpos;
+	    
+	}
+
+	public boolean checkWinner(){
+
+	    if(pos==100){
+	        isWinner=true;
+	    }
+
+	    return isWinner;
+	}
+
+}
+
+class Dice{
+	
+	public int rollDice(){
+
+	    return rand.nextInt(1,6);
+	}
+}
+
+
+class Game{
+	
+
+      Board board;
+      Dice dice;
+      Queue<Player> players;
+
+      public static void main(String[] args){
+          
+          Scanner scan = new Scanner();
+          int playersNum=scan.nextInt();
+          for(int i=0;i<playersNum;i++){
+              String userId=scan.next();
+              createPlayer(userId);
+          }
+          initialize();
+      }
+
+      public void initialize(){
+
+          dice=new Dice();
+          board=new Board();
+
+          for(int i=1;i<=100;i++){
+               Cell cell=new Cell(i);
+               board.addCell(cell);
+          }
+
+          int count=0;
+          while(count<5){
+
+               int pos=rand.nextInt(20,99);
+               Cell cell = board.getCell(pos);
+   
+               if(cell.addSnakeEndPos()){
+                    count++;
+               }
+          }
+          count=0;
+          while(count<5){
+
+              int pos=rand.nextInt(1,70);
+              Cell cell = board.getCell(pos);
+              if(cell.addLadderEndPos()){
+                  count++;
+              }
+          }
+
+          start();
+      }
+
+      public void createPlayers(String userId){
+           Player p=new Player(userId);
+           players.add(p);
+      }
+
+      public void start(){
+
+           boolean isWinner=false;
+           Scanner scan=new Scanner();
+           while(!isWinner){
+
+                if(players.size()<=0){
+
+                    throw new Exception("there is no player exist");
+                }
+                Player p=players.remove();
+                System.out.println(p.userId + "turn roll dice Yes or No");
+                String input=scan.next();
+                if(input.equals("yes")){
+
+                    int diceNumber=dice.rollDice();
+
+                    int currpos=p.getPos();
+
+                    int newpos=board.move(currpos,diceNumber);
+
+                    p.setNewPos(newpos);
+
+                    if(p.checkWinner()){
+                        isWinner = true;
+                    }
+                    else{
+                        players.add(p);
+                    }
+                }
+                else{
+                    players.add(p);
+                    continue;
+                }
+
+           }
+      }
+}
+
+
+
+
+currpos = 8
+
+dice = 5
+
+
+newpos = 13. 25
+
+
+
+
+
+
+
+
+
+
+
